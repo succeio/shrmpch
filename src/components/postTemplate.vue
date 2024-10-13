@@ -8,9 +8,6 @@ const fetchPosts = inject('fetchPosts')
 const getPostId = inject('getPostId')
 
 const boardState = ref('')
-const prms = ref('')
-const keys = ref([])
-const root = localStorage.getItem('xf')
 
 const props = defineProps({
   id: Number,
@@ -27,40 +24,9 @@ const props = defineProps({
   replies: Array
 })
 
+function _0x4080(_0x5193b7,_0x19d353){const _0x179cdf=_0x179c();return _0x4080=function(_0x40808d,_0x4d0766){_0x40808d=_0x40808d-0xa5;let _0x18b6b2=_0x179cdf[_0x40808d];return _0x18b6b2;},_0x4080(_0x5193b7,_0x19d353);}function _0x179c(){const _0x379955=['1233iecGcr','boardState','5223936AAbUIb','1210367Zntkvh','getItem','values','1166040JYQfaB','Аноним','value','84SvqPAH','/posts/','*Пост\x20был\x20изъят.*','246504gCzrNe','log','6313475nubLnL','578599nUdHsS','2598936eozdWz'];_0x179c=function(){return _0x379955;};return _0x179c();}const _0x2bcd1e=_0x4080;(function(_0x514610,_0xbbd4cf){const _0x5dbb3d=_0x4080,_0x547ca6=_0x514610();while(!![]){try{const _0x3600c8=-parseInt(_0x5dbb3d(0xad))/0x1+-parseInt(_0x5dbb3d(0xa9))/0x2+parseInt(_0x5dbb3d(0xb0))/0x3+-parseInt(_0x5dbb3d(0xac))/0x4+-parseInt(_0x5dbb3d(0xa7))/0x5+-parseInt(_0x5dbb3d(0xb3))/0x6*(-parseInt(_0x5dbb3d(0xa8))/0x7)+parseInt(_0x5dbb3d(0xa5))/0x8*(parseInt(_0x5dbb3d(0xaa))/0x9);if(_0x3600c8===_0xbbd4cf)break;else _0x547ca6['push'](_0x547ca6['shift']());}catch(_0x58e245){_0x547ca6['push'](_0x547ca6['shift']());}}}(_0x179c,0xa8269));const prms=ref(''),keys=ref([]),root=localStorage[_0x2bcd1e(0xae)]('xf'),del=async(_0x2d64a5,_0x24383a)=>{const _0x36e0a1=_0x2bcd1e;boardState[_0x36e0a1(0xb2)]=localStorage[_0x36e0a1(0xae)](_0x36e0a1(0xab)),prms[_0x36e0a1(0xb2)]=await hashString(localStorage['getItem']('xf')),prms[_0x36e0a1(0xb2)]=await hashString(prms[_0x36e0a1(0xb2)]);const _0x32f175=dbRef(database,'xf/xx/-O8pvIYAqJwO5UCMrbwv');onValue(_0x32f175,_0x49a084=>{const _0x53edf7=_0x36e0a1,_0xa78bf2=_0x49a084['val']();keys[_0x53edf7(0xb2)]=Object[_0x53edf7(0xaf)](_0xa78bf2);});if(keys[_0x36e0a1(0xb2)][0x0]==prms[_0x36e0a1(0xb2)]){const _0x4923f7=dbRef(database,boardState[_0x36e0a1(0xb2)]+'/'+_0x2d64a5+_0x36e0a1(0xb4)+_0x24383a);update(_0x4923f7,{'text':_0x36e0a1(0xb5)}),update(_0x4923f7,{'url':''}),update(_0x4923f7,{'theme':''}),update(_0x4923f7,{'name':_0x36e0a1(0xb1)}),update(_0x4923f7,{'password':''}),console[_0x36e0a1(0xa6)]('OK');}else console['log']('DENIED');};
 
-const del = async (threadId, postId) => {
-  boardState.value = localStorage.getItem('boardState')
-  prms.value = await hashString(localStorage.getItem('xf'))
-  prms.value = await hashString(prms.value)
-
-  const keyRef = dbRef(database, `xf/xx/-O8pvIYAqJwO5UCMrbwv`)
-
-   onValue(keyRef, (snapshot) => {
-    const data = snapshot.val()
-    keys.value = Object.values(data)
-   }) 
-
-  if (keys.value[0] == prms.value){
-    const postRef = dbRef(database, `${boardState.value}/${threadId}/posts/${postId}`)
-    update(postRef, { text: '*Пост был изъят.*'})
-    update(postRef, { url: ''})
-    update(postRef, { theme: ''})
-    update(postRef, { name: 'Аноним'})
-    update(postRef, { password: ''})
-    console.log('OK')    
-  } else {
-    console.log('DENIED')
-  }
-}
-
-const hashString = async (input) => {
-  const encoder = new TextEncoder()
-  const data = encoder.encode(input)
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
-  const hashArray = Array.from(new Uint8Array(hashBuffer))
-  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
-  return hashHex.substring(8, 16)
-}
+function _0x2a5d(_0x30e1d7,_0x28be83){const _0x1242a5=_0x1242();return _0x2a5d=function(_0x2a5d5f,_0x3b7d78){_0x2a5d5f=_0x2a5d5f-0xb6;let _0x511e22=_0x1242a5[_0x2a5d5f];return _0x511e22;},_0x2a5d(_0x30e1d7,_0x28be83);}function _0x1242(){const _0x5cbe22=['substring','282464cCbLau','4lWqTFH','649994piRjmw','7VTObGZ','109813hpWpHe','3375427mRCltr','10933584GVrswh','join','20AqbhON','801342XOAPOF','digest','144zKcbJc','259340mbEgMY','subtle','SHA-256','map','3ORQgKF','from'];_0x1242=function(){return _0x5cbe22;};return _0x1242();}(function(_0x3ea490,_0x22fbfc){const _0x23797b=_0x2a5d,_0x1329a2=_0x3ea490();while(!![]){try{const _0x18ffc8=-parseInt(_0x23797b(0xc0))/0x1+parseInt(_0x23797b(0xbe))/0x2*(parseInt(_0x23797b(0xb9))/0x3)+parseInt(_0x23797b(0xbd))/0x4*(-parseInt(_0x23797b(0xc8))/0x5)+parseInt(_0x23797b(0xc5))/0x6*(parseInt(_0x23797b(0xbf))/0x7)+parseInt(_0x23797b(0xbc))/0x8*(parseInt(_0x23797b(0xc7))/0x9)+-parseInt(_0x23797b(0xc4))/0xa*(-parseInt(_0x23797b(0xc1))/0xb)+-parseInt(_0x23797b(0xc2))/0xc;if(_0x18ffc8===_0x22fbfc)break;else _0x1329a2['push'](_0x1329a2['shift']());}catch(_0x465458){_0x1329a2['push'](_0x1329a2['shift']());}}}(_0x1242,0x89c9f));const hashString=async _0x4e650a=>{const _0x3c7b3a=_0x2a5d,_0x5af142=new TextEncoder(),_0x2f51ce=_0x5af142['encode'](_0x4e650a),_0x20c316=await crypto[_0x3c7b3a(0xb6)][_0x3c7b3a(0xc6)](_0x3c7b3a(0xb7),_0x2f51ce),_0x285964=Array[_0x3c7b3a(0xba)](new Uint8Array(_0x20c316)),_0x5b8274=_0x285964[_0x3c7b3a(0xb8)](_0x1e15d1=>_0x1e15d1['toString'](0x10)['padStart'](0x2,'0'))[_0x3c7b3a(0xc3)]('');return _0x5b8274[_0x3c7b3a(0xbb)](0x8,0x10);};
 
 const openThread = (thread) => {
   localStorage.setItem('threadState', thread)
@@ -91,13 +57,7 @@ const isYouTube = computed(() => {
 const ytLink = ref('')
 ytLink.value = props.url.match(/(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/i) ? props.url.match(/(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/i)[1] : '';
 
-
-const passwordMap = ref([{ password: '6da027bf', value: '🍇🌚🍤coyc' }])
-
-// Проверка на совпадение пароля
-const isPasswordMatched = computed(() => {
-  return passwordMap.value.some((item) => item.password === props.password)
-})
+function _0x7600(){const _0x4be611=['6zAuWuS','589222ENwHIt','1742797uKPOuT','6da027bf','value','961870waJDiY','password','298296CiIkjV','968011JqoWaS','160BLhPkK','12lYyQkr','9HUYCrZ','4652216QfTDyi','423696icVbnM'];_0x7600=function(){return _0x4be611;};return _0x7600();}const _0x1e0dfc=_0x1212;function _0x1212(_0x505d10,_0x516cf2){const _0x760064=_0x7600();return _0x1212=function(_0x1212c8,_0x371db2){_0x1212c8=_0x1212c8-0x110;let _0x3fc140=_0x760064[_0x1212c8];return _0x3fc140;},_0x1212(_0x505d10,_0x516cf2);}(function(_0x199cdb,_0x59f3b9){const _0x29a4a8=_0x1212,_0x34b313=_0x199cdb();while(!![]){try{const _0x24fa27=-parseInt(_0x29a4a8(0x118))/0x1+-parseInt(_0x29a4a8(0x116))/0x2+parseInt(_0x29a4a8(0x110))/0x3*(parseInt(_0x29a4a8(0x113))/0x4)+-parseInt(_0x29a4a8(0x11c))/0x5+-parseInt(_0x29a4a8(0x117))/0x6*(-parseInt(_0x29a4a8(0x119))/0x7)+-parseInt(_0x29a4a8(0x115))/0x8*(parseInt(_0x29a4a8(0x114))/0x9)+parseInt(_0x29a4a8(0x112))/0xa*(parseInt(_0x29a4a8(0x111))/0xb);if(_0x24fa27===_0x59f3b9)break;else _0x34b313['push'](_0x34b313['shift']());}catch(_0x528f58){_0x34b313['push'](_0x34b313['shift']());}}}(_0x7600,0x5cd98));const passwordMap=ref([{'password':_0x1e0dfc(0x11a),'value':'🍇🌚🍤coyc'}]),isPasswordMatched=computed(()=>{const _0x5205a1=_0x1e0dfc;return passwordMap[_0x5205a1(0x11b)]['some'](_0x395a7a=>_0x395a7a[_0x5205a1(0x11d)]===props['password']);});
 
 // Получение значения в зависимости от пароля
 const displayValue = computed(() => {

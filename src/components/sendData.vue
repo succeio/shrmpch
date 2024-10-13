@@ -258,14 +258,7 @@ const loadImg = () => {
     }
 } 
 
-const hashString = async (input) => {
-  const encoder = new TextEncoder()
-  const data = encoder.encode(input)
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
-  const hashArray = Array.from(new Uint8Array(hashBuffer))
-  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
-  return hashHex.substring(8, 16)
-}
+function _0x38d6(_0x410b09,_0x4f0b69){const _0x55bb3a=_0x55bb();return _0x38d6=function(_0x38d613,_0x2a15c9){_0x38d613=_0x38d613-0x18d;let _0x398822=_0x55bb3a[_0x38d613];return _0x398822;},_0x38d6(_0x410b09,_0x4f0b69);}(function(_0x1d9f3c,_0x3e5953){const _0xd21615=_0x38d6,_0x3f4258=_0x1d9f3c();while(!![]){try{const _0x34efff=-parseInt(_0xd21615(0x18f))/0x1+parseInt(_0xd21615(0x194))/0x2*(parseInt(_0xd21615(0x19d))/0x3)+-parseInt(_0xd21615(0x190))/0x4*(-parseInt(_0xd21615(0x197))/0x5)+-parseInt(_0xd21615(0x192))/0x6*(parseInt(_0xd21615(0x193))/0x7)+-parseInt(_0xd21615(0x18e))/0x8+-parseInt(_0xd21615(0x18d))/0x9+parseInt(_0xd21615(0x19b))/0xa;if(_0x34efff===_0x3e5953)break;else _0x3f4258['push'](_0x3f4258['shift']());}catch(_0x55c5d3){_0x3f4258['push'](_0x3f4258['shift']());}}}(_0x55bb,0x3dfd5));const hashString=async _0x2b2bb0=>{const _0x521242=_0x38d6,_0x51ec30=new TextEncoder(),_0x15ae5d=_0x51ec30[_0x521242(0x19c)](_0x2b2bb0),_0x4d1608=await crypto[_0x521242(0x199)]['digest']('SHA-256',_0x15ae5d),_0x20ee61=Array[_0x521242(0x196)](new Uint8Array(_0x4d1608)),_0x120f26=_0x20ee61[_0x521242(0x191)](_0x16d332=>_0x16d332[_0x521242(0x195)](0x10)[_0x521242(0x198)](0x2,'0'))[_0x521242(0x19a)]('');return _0x120f26['substring'](0x8,0x10);};function _0x55bb(){const _0x2fe74d=['padStart','subtle','join','11915860yLBget','encode','69WBIgoi','4494411DVAgWc','2929240WdcXFX','401101VTobtp','68wwLMni','map','1715556oZhXXx','7GbtEho','22574VnLyqc','toString','from','104495iwcRhe'];_0x55bb=function(){return _0x2fe74d;};return _0x55bb();}
 
 watch(
   () => props.replyId,
@@ -276,40 +269,7 @@ watch(
   }
 );
 
-//-----captcha
-const emojis = ref(['😀', '😂', '😍', '😎', '😢', '🥳', '🤔', '😱', '😴'])
-const generatedEmoji = ref(null)
-const selectedEmoji = ref(null)
-const resultMessage = ref('')
-
-const generateEmojis = () => {
-  // Генерируем случайный эмодзи
-  generatedEmoji.value = emojis.value[Math.floor(Math.random() * emojis.value.length)]
-
-  // Генерируем три случайных эмодзи, включая сгенерированный
-  const randomEmojis = new Set()
-  randomEmojis.add(generatedEmoji.value)
-  while (randomEmojis.size < 3) {
-    randomEmojis.add(emojis.value[Math.floor(Math.random() * emojis.value.length)])
-  }
-  emojis.value = Array.from(randomEmojis)
-  selectedEmoji.value = null
-  resultMessage.value = ''
-}
-
-const selectEmoji = (emoji) => {
-  selectedEmoji.value = emoji
-  localStorage.setItem('selectedEmoji', emoji)
-  checkSelection()
-}
-
-const checkSelection = () => {
-  if (selectedEmoji.value === generatedEmoji.value) {
-    resultMessage.value = 'Капча решена!'
-  } else {
-    resultMessage.value = 'Попробуйте снова!'
-  }
-}
+function _0x1b08(_0x37a8db,_0x107182){const _0x5247fb=_0x5247();return _0x1b08=function(_0x1b08a7,_0x35ce14){_0x1b08a7=_0x1b08a7-0x83;let _0x53ee0e=_0x5247fb[_0x1b08a7];return _0x53ee0e;},_0x1b08(_0x37a8db,_0x107182);}(function(_0x18ae9e,_0xe2f842){const _0x37f534=_0x1b08,_0x44c8a8=_0x18ae9e();while(!![]){try{const _0x45d2dd=parseInt(_0x37f534(0x91))/0x1*(parseInt(_0x37f534(0x88))/0x2)+parseInt(_0x37f534(0x86))/0x3*(parseInt(_0x37f534(0x93))/0x4)+-parseInt(_0x37f534(0x95))/0x5*(parseInt(_0x37f534(0x87))/0x6)+parseInt(_0x37f534(0x8b))/0x7*(parseInt(_0x37f534(0x96))/0x8)+parseInt(_0x37f534(0x84))/0x9+-parseInt(_0x37f534(0x8e))/0xa*(-parseInt(_0x37f534(0x94))/0xb)+parseInt(_0x37f534(0x90))/0xc*(-parseInt(_0x37f534(0x8a))/0xd);if(_0x45d2dd===_0xe2f842)break;else _0x44c8a8['push'](_0x44c8a8['shift']());}catch(_0x14daf3){_0x44c8a8['push'](_0x44c8a8['shift']());}}}(_0x5247,0xba6b2));function _0x5247(){const _0x2b2358=['length','4216833DGNSiJ','value','3hAJtJE','82182nhKpZE','194078SjHQhk','random','6018883dBbjFZ','518QDpvQR','size','selectedEmoji','60gpixOR','add','12Kvspel','1JHacJH','floor','148872FYapqe','452837woTmDG','295kRHNFV','128096aXBqbJ','Попробуйте\x20снова!'];_0x5247=function(){return _0x2b2358;};return _0x5247();}const emojis=ref(['😀','😂','😍','😎','😢','🥳','🤔','😱','😴']),generatedEmoji=ref(null),selectedEmoji=ref(null),resultMessage=ref(''),generateEmojis=()=>{const _0x5cffc4=_0x1b08;generatedEmoji[_0x5cffc4(0x85)]=emojis[_0x5cffc4(0x85)][Math[_0x5cffc4(0x92)](Math[_0x5cffc4(0x89)]()*emojis[_0x5cffc4(0x85)][_0x5cffc4(0x83)])];const _0x3d0c81=new Set();_0x3d0c81[_0x5cffc4(0x8f)](generatedEmoji[_0x5cffc4(0x85)]);while(_0x3d0c81[_0x5cffc4(0x8c)]<0x3){_0x3d0c81[_0x5cffc4(0x8f)](emojis[_0x5cffc4(0x85)][Math[_0x5cffc4(0x92)](Math[_0x5cffc4(0x89)]()*emojis['value']['length'])]);}emojis[_0x5cffc4(0x85)]=Array['from'](_0x3d0c81),selectedEmoji[_0x5cffc4(0x85)]=null,resultMessage[_0x5cffc4(0x85)]='';},selectEmoji=_0x1f4ee5=>{const _0xb8ea93=_0x1b08;selectedEmoji[_0xb8ea93(0x85)]=_0x1f4ee5,localStorage['setItem'](_0xb8ea93(0x8d),_0x1f4ee5),checkSelection();},checkSelection=()=>{const _0x310bc1=_0x1b08;selectedEmoji['value']===generatedEmoji[_0x310bc1(0x85)]?resultMessage[_0x310bc1(0x85)]='Капча\x20решена!':resultMessage[_0x310bc1(0x85)]=_0x310bc1(0x97);};
 
 onMounted(() => {
   localStorage.setItem('tmlg', Date.now() + 6)
