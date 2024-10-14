@@ -74,7 +74,6 @@ const sendPost = async () => {
 
 //-------
 
-    // Получаем все забаненные объекты
     const bannedRef = dbRef(database, `banned/${boardState.value}/uIds`);
     const bannedSnapshot = await get(bannedRef);
     const isBanned = ref(false)
@@ -84,24 +83,22 @@ const sendPost = async () => {
       const bannedData = bannedSnapshot.val();
       const banKey = ref(null)
 
-      // Проходим по всем забаненным объектам
       for (const key in bannedData) {
         if (bannedData[key].uId === uId.value) {
           isBanned.value = true;
-          banExpiration.value = bannedData[key].exp; // Получаем время истечения бана
-          banKey.value = key; // Сохраняем ключ для удаления
-          break; // Выходим из цикла, если нашли uId
+          banExpiration.value = bannedData[key].exp;
+          banKey.value = key; 
+          break;
         }
       }
 
-      // Проверяем, истек ли срок бана
       if (isBanned.value) {
         const currentTime = Date.now();
         if (currentTime < banExpiration.value) {
-          console.log(`uId ${uId.value} забанен до ${new Date(banExpiration.value).toLocaleString()}`);
+          console.log(`Забанен до ${new Date(banExpiration.value).toLocaleString()}`);
         } else {
           const banKeyRef = dbRef(database, `banned/${boardState.value}/uIds/${banKey.value}`);
-          await remove(banKeyRef); // Удаляем объект по ссылке
+          await remove(banKeyRef); 
           isBanned.value = false
         }
       }
