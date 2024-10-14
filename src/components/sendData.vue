@@ -67,9 +67,10 @@ const sendPost = async () => {
       ? localStorage.getItem('boardState')
       : localStorage.setItem('boardState', '')
 
-    fetch('https://api.ipify.org?format=json')
-      .then(response => response.json())
-      .then(uId.value = await hashString(postPassword.value))
+    const response = await fetch('https://api.ipify.org?format=json')
+    const data = await response.json()
+    const data0 = data.ip; 
+    uId.value = await hashString(data0); 
 
 //-------
 
