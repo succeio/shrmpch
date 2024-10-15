@@ -67,12 +67,12 @@ const sendPost = async () => {
       ? localStorage.getItem('boardState')
       : localStorage.setItem('boardState', '')
 
+//--------
+
     const response = await fetch('https://api.ipify.org?format=json')
     const data = await response.json()
     const data0 = data.ip; 
     uId.value = await hashString(data0); 
-
-//-------
 
     const bannedRef = dbRef(database, `banned/${boardState.value}/uIds`);
     const bannedSnapshot = await get(bannedRef);
