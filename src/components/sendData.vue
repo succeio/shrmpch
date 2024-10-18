@@ -1,11 +1,15 @@
 <script setup>
-import { ref, inject, watch, onMounted } from 'vue'
+import { ref, inject, watch, onMounted} from 'vue'
+import { useRoute, useRouter } from 'vue-router';
 import { database } from '../firebase'
 import { ref as dbRef, push, set, get, update, remove } from 'firebase/database'
 import ErrorNotification from './ErrorNotification.vue';
 
 const errorMessage = ref('');
-const errorTrigger = ref(0); // Триггер для обновления компонента ошибки
+const errorTrigger = ref(0); 
+
+const route = useRoute();
+const router = useRouter();
 
 
 ;(function () {
@@ -33,8 +37,6 @@ const postText = ref('')
 const postUrl = ref('')
 const postPassword = ref('')
 const hashedString = ref('')
-const threadState = ref('')
-const boardState = ref('')
 const replies = ref([])
 const uId = ref('')
 
@@ -60,59 +62,18 @@ const boards = [
 
 const sendPost = async () => {
   try {
-    threadState.value = localStorage.getItem('threadState')
-      ? localStorage.getItem('threadState')
-      : localStorage.setItem('threadState', '')
-    boardState.value = localStorage.getItem('boardState')
-      ? localStorage.getItem('boardState')
-      : localStorage.setItem('boardState', '')
 
-//--------
-
-    const response = await fetch('https://api.ipify.org?format=json')
-    const data = await response.json()
-    const data0 = data.ip; 
-    uId.value = await hashString(data0); 
-
-    const bannedRef = dbRef(database, `banned/${boardState.value}/uIds`);
-    const bannedSnapshot = await get(bannedRef);
-    const isBanned = ref(false)
-    const banExpiration = ref(null)
-
-    if (bannedSnapshot.exists()) {
-      const bannedData = bannedSnapshot.val();
-      const banKey = ref(null)
-
-      for (const key in bannedData) {
-        if (bannedData[key].uId === uId.value) {
-          isBanned.value = true;
-          banExpiration.value = bannedData[key].exp;
-          banKey.value = key; 
-          break;
-        }
-      }
-
-      if (isBanned.value) {
-        const currentTime = Date.now();
-        if (currentTime < banExpiration.value) {
-          console.log(`Забанен до ${new Date(banExpiration.value).toLocaleString()}`);
-        } else {
-          const banKeyRef = dbRef(database, `banned/${boardState.value}/uIds/${banKey.value}`);
-          await remove(banKeyRef); 
-          isBanned.value = false
-        }
-      }
-    }
+function _0x1b31(){const _0x42b4b6=['value','banned/','4423149FyCIxr','288588RAidVK','toLocaleString','/uIds','params','val','uId\x20','10OUaUET','4Tjqwjy','uId','board','45846xsxfMC','798005dUwXWA','15277812Qcixbr','https://api.ipify.org?format=json','/uIds/','189cEalbP','json','3yykhyy','exp','3787415HqSRpk','exists','557832WNUXgC'];_0x1b31=function(){return _0x42b4b6;};return _0x1b31();}const _0x3154a6=_0x522d;(function(_0x153f0d,_0x1e27bf){const _0x3eac01=_0x522d,_0x1b9081=_0x153f0d();while(!![]){try{const _0x51d89f=-parseInt(_0x3eac01(0x139))/0x1+parseInt(_0x3eac01(0x12e))/0x2*(-parseInt(_0x3eac01(0x126))/0x3)+-parseInt(_0x3eac01(0x135))/0x4*(parseInt(_0x3eac01(0x128))/0x5)+parseInt(_0x3eac01(0x138))/0x6*(parseInt(_0x3eac01(0x124))/0x7)+parseInt(_0x3eac01(0x12a))/0x8+parseInt(_0x3eac01(0x12d))/0x9+parseInt(_0x3eac01(0x134))/0xa*(parseInt(_0x3eac01(0x121))/0xb);if(_0x51d89f===_0x1e27bf)break;else _0x1b9081['push'](_0x1b9081['shift']());}catch(_0x302fb8){_0x1b9081['push'](_0x1b9081['shift']());}}}(_0x1b31,0x6f79f));const response=await fetch(_0x3154a6(0x122)),data=await response[_0x3154a6(0x125)](),ipAddress=data['ip'];function _0x522d(_0x140f8f,_0x1b3414){const _0x1b3137=_0x1b31();return _0x522d=function(_0x522dfd,_0x40e23b){_0x522dfd=_0x522dfd-0x121;let _0x563468=_0x1b3137[_0x522dfd];return _0x563468;},_0x522d(_0x140f8f,_0x1b3414);}uId[_0x3154a6(0x12b)]=await hashString(ipAddress);const bannedRef=dbRef(database,_0x3154a6(0x12c)+route[_0x3154a6(0x131)][_0x3154a6(0x137)]+_0x3154a6(0x130)),bannedSnapshot=await get(bannedRef),ropopom=ref(![]),banExpiration=ref(null);if(bannedSnapshot[_0x3154a6(0x129)]()){const bannedData=bannedSnapshot[_0x3154a6(0x132)](),banKey=ref(null);for(const key in bannedData){if(bannedData[key][_0x3154a6(0x136)]===uId[_0x3154a6(0x12b)]){ropopom[_0x3154a6(0x12b)]=!![],banExpiration[_0x3154a6(0x12b)]=bannedData[key][_0x3154a6(0x127)],banKey[_0x3154a6(0x12b)]=key;break;}}if(ropopom['value']){const currentTime=Date['now']();if(currentTime<banExpiration['value'])console['log'](_0x3154a6(0x133)+uId[_0x3154a6(0x12b)]+'\x20забанен\x20до\x20'+new Date(banExpiration['value'])[_0x3154a6(0x12f)]());else{const banKeyRef=dbRef(database,_0x3154a6(0x12c)+route['params'][_0x3154a6(0x137)]+_0x3154a6(0x123)+banKey[_0x3154a6(0x12b)]);await remove(banKeyRef),ropopom[_0x3154a6(0x12b)]=![];}}}    
 
 //-------      
 
-    if (isBanned.value === false) {
+    if (ropopom.value === false) {
       if (
-        threadState.value &&
-        boardState.value &&
-        boards.some((board) => boardState.value.includes(board))
+        route.params.thread &&
+        route.params.board &&
+        boards.some((board) => route.params.board.includes(board))
       ) {
-        const postId = push(dbRef(database, `${boardState.value}/${threadState.value}`)).key // Генерация уникального ID
+        const postId = push(dbRef(database, `${route.params.board}/${route.params.thread}`)).key // Генерация уникального ID
 
         replies.value = postText.value.match(/#([A-Za-z0-9_-]+)/g)
 
@@ -123,7 +84,7 @@ const sendPost = async () => {
           name: postName.value ? (postName.value.length > 25 ? postName.value.slice(0, 25) : postName.value) : 'Аноним',
           password: postPassword.value ? hashedString.value : '',
           theme: postTheme.value.length < 45 ? postTheme.value : postTheme.value.slice(0, 25),
-          text: (/\s{4,}/.test(postText.value) ? postText.value.replace(/\s{4,}/g, ' ') : postText.value).replace(/[^A-Za-zА-Яа-я0-9\s\w\s.,:;!?'"<>\\//{}$#(@%^&*_+=)-]/g, ''),
+          text: (/\s{4,}/.test(postText.value) ? postText.value.replace(/\s{4,}/g, ' ') : postText.value).replace(/[^A-Za-zА-Яа-я0-9\s\w\s.ё—`,:;!?'"<>\\//{}$#(@%^&*_+=)-]/g, ''),
           url: postUrl.value.length < 100 ? (imgSize.value !== 0 ? (imgSize.value < 4000000 ? postUrl.value : '') : postUrl.value) : '',
           time: new Date().toLocaleTimeString('ru-RU', {
             timeZone: 'Europe/Moscow',
@@ -134,7 +95,7 @@ const sendPost = async () => {
           data: new Date().toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '.'),
           day: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'][new Date().getDay()],
           postId: postId,
-          threadId: threadState.value,
+          threadId: route.params.thread,
           uId: uId.value
         }
 
@@ -146,14 +107,21 @@ const sendPost = async () => {
           if (currentTimeElapsed >= 5000) {
             if (postText.value.length < 450 && selectedEmoji.value === generatedEmoji.value) {
               // Сохраняем новый пост
-              await set(dbRef(database, `${boardState.value}/${threadState.value}/posts/${postId}`), newPost)
+              await set(dbRef(database, `${route.params.board}/${route.params.thread}/posts/${postId}`), newPost)
               localStorage.setItem('tmlg', Date.now())
 
               try {
-                // ----------- Обновление lastPostTimestamp в треде ----------- 
-                await update(dbRef(database, `${boardState.value}/${threadState.value}`), {
-                  lastPostTimestamp: Date.now() // Обновляем только метку времени последнего поста
-                })
+
+                const snapshot = await get(dbRef(database, `${route.params.board}/${route.params.thread}`))
+                if (snapshot.exists()) {
+                  const data = snapshot.val()
+                  if (data.lastPostTimestamp != 9999999999999) {
+                    // ----------- Обновление lastPostTimestamp в треде ----------- 
+                    await update(dbRef(database, `${route.params.board}/${route.params.thread}`), {
+                      lastPostTimestamp: Date.now() // Обновляем только метку времени последнего поста
+                    })
+                  }
+                }
               } catch (err) {
                 console.error(`Ошибка при обновлении метки последнего поста в треде: `, err)
               }
@@ -162,7 +130,7 @@ const sendPost = async () => {
               if (replies.value && replies.value.length) {
                 for (const id of replies.value) {
                   const sId = id.replace('#', '')
-                  const postRef = dbRef(database, `${boardState.value}/${threadState.value}/posts/${sId}`)
+                  const postRef = dbRef(database, `${route.params.board}/${route.params.thread}/posts/${sId}`)
 
                   try {
                     const snapshot = await get(postRef)
@@ -207,16 +175,16 @@ const sendPost = async () => {
             errorTrigger.value++; // Обновляем триггер          
           }
         }
-      } else if (boardState.value && boards.some((board) => boardState.value.includes(board))) {
+      } else if (route.params.board && boards.some((board) => route.params.board.includes(board))) {
         const threadId = push(dbRef(database, 'threads')).key // Генерация уникального ID для нового треда
-        const postId = push(dbRef(database, `${boardState.value}/${threadId}`)).key // Генерация уникального ID для поста
+        const postId = push(dbRef(database, `${route.params.board}/${threadId}`)).key // Генерация уникального ID для поста
 
         hashedString.value = await hashString(postPassword.value)
         const newPost = {
           name: postName.value ? (postName.value.length > 25 ? postName.value.slice(0, 25) : postName.value) : 'Аноним',
           password: postPassword.value ? hashedString.value : '',
           theme: postTheme.value.length < 45 ? postTheme.value : postTheme.value.slice(0, 25),
-          text: (/\s{4,}/.test(postText.value) ? postText.value.replace(/\s{4,}/g, ' ') : postText.value).replace(/[^A-Za-zА-Яа-я0-9\s\w\s.,:;!?'"<>\\//{}$#(@%^&*_+=)-]/g, ''),
+          text: (/\s{4,}/.test(postText.value) ? postText.value.replace(/\s{4,}/g, ' ') : postText.value).replace(/[^A-Za-zА-Яа-я0-9\s\w\sё—`.,:;!?'"<>\\//{}$#(@%^&*_+=)-]/g, ''),
           url: postUrl.value.length < 100 ? postUrl.value : '',
           time: new Date().toLocaleTimeString('ru-RU', {
             timeZone: 'Europe/Moscow',
@@ -238,23 +206,20 @@ const sendPost = async () => {
           const currentTimeElapsed = Date.now() - savedTime
           if (currentTimeElapsed >= 25000) {
             if (postText.value.length < 450 && /\.(jpeg|jpg|gif|png|mp4|webm|ogg)$/i.test(postUrl.value) && selectedEmoji.value === generatedEmoji.value) {
-              await set(dbRef(database, `${boardState.value}/${threadId}/posts/${postId}`), newPost)
+              await set(dbRef(database, `${route.params.board}/${threadId}/posts/${postId}`), newPost)
 
               // ----------- Установка lastPostTimestamp и 0p для нового треда ----------- 
-              await update(dbRef(database, `${boardState.value}/${threadId}`), {
+              await update(dbRef(database, `${route.params.board}/${threadId}`), {
                 lastPostTimestamp: Date.now(), // Обновляем только метку времени последнего поста
                 op: newPost
               })
-
-
-              localStorage.setItem('threadState', threadId)
-              threadState.value = threadId
 
               generateEmojis()
               postText.value = ''
               postUrl.value = ''
               postTheme.value = ''
 
+              router.push({ path: `/${route.params.board}/${threadId}` })
               fetchPosts()
             } else {
               errorMessage.value = 'Пост слишком длинный или не выбран файл! Максимальная длина 450 символов.';
@@ -275,6 +240,7 @@ const sendPost = async () => {
   }
 }
 
+
 const loadImg = () => {
     // Очищаем предыдущие значения
     imgSize.value = 0;
@@ -290,7 +256,6 @@ const loadImg = () => {
         // Обработчик события загрузки изображения
         img.onload = () => {
             imgSize.value = img.width * img.height; // Сохраняем размер изображения
-            console.log(`Размер изображения: ${imgSize.value}`);
         };
 
         // Обработчик события ошибки загрузки изображения
@@ -304,7 +269,8 @@ const loadImg = () => {
     }
 } 
 
-function _0x38d6(_0x410b09,_0x4f0b69){const _0x55bb3a=_0x55bb();return _0x38d6=function(_0x38d613,_0x2a15c9){_0x38d613=_0x38d613-0x18d;let _0x398822=_0x55bb3a[_0x38d613];return _0x398822;},_0x38d6(_0x410b09,_0x4f0b69);}(function(_0x1d9f3c,_0x3e5953){const _0xd21615=_0x38d6,_0x3f4258=_0x1d9f3c();while(!![]){try{const _0x34efff=-parseInt(_0xd21615(0x18f))/0x1+parseInt(_0xd21615(0x194))/0x2*(parseInt(_0xd21615(0x19d))/0x3)+-parseInt(_0xd21615(0x190))/0x4*(-parseInt(_0xd21615(0x197))/0x5)+-parseInt(_0xd21615(0x192))/0x6*(parseInt(_0xd21615(0x193))/0x7)+-parseInt(_0xd21615(0x18e))/0x8+-parseInt(_0xd21615(0x18d))/0x9+parseInt(_0xd21615(0x19b))/0xa;if(_0x34efff===_0x3e5953)break;else _0x3f4258['push'](_0x3f4258['shift']());}catch(_0x55c5d3){_0x3f4258['push'](_0x3f4258['shift']());}}}(_0x55bb,0x3dfd5));const hashString=async _0x2b2bb0=>{const _0x521242=_0x38d6,_0x51ec30=new TextEncoder(),_0x15ae5d=_0x51ec30[_0x521242(0x19c)](_0x2b2bb0),_0x4d1608=await crypto[_0x521242(0x199)]['digest']('SHA-256',_0x15ae5d),_0x20ee61=Array[_0x521242(0x196)](new Uint8Array(_0x4d1608)),_0x120f26=_0x20ee61[_0x521242(0x191)](_0x16d332=>_0x16d332[_0x521242(0x195)](0x10)[_0x521242(0x198)](0x2,'0'))[_0x521242(0x19a)]('');return _0x120f26['substring'](0x8,0x10);};function _0x55bb(){const _0x2fe74d=['padStart','subtle','join','11915860yLBget','encode','69WBIgoi','4494411DVAgWc','2929240WdcXFX','401101VTobtp','68wwLMni','map','1715556oZhXXx','7GbtEho','22574VnLyqc','toString','from','104495iwcRhe'];_0x55bb=function(){return _0x2fe74d;};return _0x55bb();}
+(function(_0x1a7223,_0x3eaf98){const _0x35134d=_0x389d,_0x32053d=_0x1a7223();while(!![]){try{const _0x3c28b=parseInt(_0x35134d(0x147))/0x1+parseInt(_0x35134d(0x145))/0x2+parseInt(_0x35134d(0x151))/0x3*(-parseInt(_0x35134d(0x144))/0x4)+parseInt(_0x35134d(0x14e))/0x5*(parseInt(_0x35134d(0x150))/0x6)+-parseInt(_0x35134d(0x149))/0x7+parseInt(_0x35134d(0x148))/0x8*(parseInt(_0x35134d(0x14a))/0x9)+-parseInt(_0x35134d(0x153))/0xa*(parseInt(_0x35134d(0x154))/0xb);if(_0x3c28b===_0x3eaf98)break;else _0x32053d['push'](_0x32053d['shift']());}catch(_0x473164){_0x32053d['push'](_0x32053d['shift']());}}}(_0x2e32,0x6c435));function _0x389d(_0x2aa0f4,_0x23aaed){const _0x2e327d=_0x2e32();return _0x389d=function(_0x389df6,_0x4a38){_0x389df6=_0x389df6-0x140;let _0x1ad402=_0x2e327d[_0x389df6];return _0x1ad402;},_0x389d(_0x2aa0f4,_0x23aaed);}function _0x2e32(){const _0x2ea504=['18WQyocy','toString','subtle','padStart','18040Fvzvoe','substring','942lCaKJK','29658Zkkoxg','digest','290bkTipj','151327xVYWQO','encode','join','map','SHA-256','56omwRAX','1727424kmpzow','from','53467ZkqkrQ','454176TXBkXU','4314639gSqFDZ'];_0x2e32=function(){return _0x2ea504;};return _0x2e32();}const hashString=async _0x50f653=>{const _0xda1a15=_0x389d,_0x18bc43=new TextEncoder(),_0x4835f0=_0x18bc43[_0xda1a15(0x140)](_0x50f653),_0x4078dc=await crypto[_0xda1a15(0x14c)][_0xda1a15(0x152)](_0xda1a15(0x143),_0x4835f0),_0x133e76=Array[_0xda1a15(0x146)](new Uint8Array(_0x4078dc)),_0x19f4fe=_0x133e76[_0xda1a15(0x142)](_0x2cf427=>_0x2cf427[_0xda1a15(0x14b)](0x10)[_0xda1a15(0x14d)](0x2,'0'))[_0xda1a15(0x141)]('');return _0x19f4fe[_0xda1a15(0x14f)](0x8,0x10);};
+
 
 watch(
   () => props.replyId,
@@ -315,9 +281,8 @@ watch(
   }
 );
 
-(function(_0xa99e1f,_0x1248b6){const _0x20fb25=_0x38a6,_0x1643be=_0xa99e1f();while(!![]){try{const _0x42fc7f=-parseInt(_0x20fb25(0xda))/0x1+parseInt(_0x20fb25(0xe7))/0x2*(-parseInt(_0x20fb25(0xe0))/0x3)+parseInt(_0x20fb25(0xe4))/0x4*(parseInt(_0x20fb25(0xd7))/0x5)+parseInt(_0x20fb25(0xe8))/0x6+-parseInt(_0x20fb25(0xd6))/0x7*(parseInt(_0x20fb25(0xe6))/0x8)+parseInt(_0x20fb25(0xdd))/0x9*(-parseInt(_0x20fb25(0xd4))/0xa)+parseInt(_0x20fb25(0xde))/0xb;if(_0x42fc7f===_0x1248b6)break;else _0x1643be['push'](_0x1643be['shift']());}catch(_0x139e0f){_0x1643be['push'](_0x1643be['shift']());}}}(_0x36e3,0xc0454));function _0x38a6(_0x4a4473,_0x4a1d4f){const _0x36e38f=_0x36e3();return _0x38a6=function(_0x38a67d,_0x14c51f){_0x38a67d=_0x38a67d-0xd3;let _0x47213b=_0x36e38f[_0x38a67d];return _0x47213b;},_0x38a6(_0x4a4473,_0x4a1d4f);}function _0x36e3(){const _0x3182d6=['size','1406134qdBhzs','floor','Капча\x20решена!','77175kNhjEr','4312308cwLalP','add','174OPlgkT','length','value','setItem','4859664WSGWuR','random','664XtyxDT','1768BJRqXv','6185742vVAIjc','sort','300FxBEHb','Попробуйте\x20снова!','11445eOvPzW','5qppMvc','from'];_0x36e3=function(){return _0x3182d6;};return _0x36e3();}const emojisPool=ref(['😀','😂','😍','😎','😢','🥳','🤔','😱','😴']),generatedEmoji=ref(null),selectedEmoji=ref(null),resultMessage=ref(''),emojis=ref([]),generateEmojis=()=>{const _0x202790=_0x38a6,_0x41e4ec=[...emojisPool[_0x202790(0xe2)]];generatedEmoji[_0x202790(0xe2)]=_0x41e4ec[Math[_0x202790(0xdb)](Math[_0x202790(0xe5)]()*_0x41e4ec[_0x202790(0xe1)])];const _0x4505fd=new Set();_0x4505fd[_0x202790(0xdf)](generatedEmoji[_0x202790(0xe2)]);while(_0x4505fd[_0x202790(0xd9)]<0x3){_0x4505fd['add'](_0x41e4ec[Math[_0x202790(0xdb)](Math[_0x202790(0xe5)]()*_0x41e4ec['length'])]);}emojis[_0x202790(0xe2)]=Array[_0x202790(0xd8)](_0x4505fd)[_0x202790(0xd3)](()=>Math['random']()-0.5),selectedEmoji['value']=null,resultMessage[_0x202790(0xe2)]='';},selectEmoji=_0x12178f=>{const _0x22b96f=_0x38a6;selectedEmoji[_0x22b96f(0xe2)]=_0x12178f,localStorage[_0x22b96f(0xe3)]('selectedEmoji',_0x12178f),checkSelection();},checkSelection=()=>{const _0x19c3a3=_0x38a6;selectedEmoji[_0x19c3a3(0xe2)]===generatedEmoji[_0x19c3a3(0xe2)]?resultMessage['value']=_0x19c3a3(0xdc):resultMessage[_0x19c3a3(0xe2)]=_0x19c3a3(0xd5);};
 
-//function _0x1b08(_0x37a8db,_0x107182){const _0x5247fb=_0x5247();return _0x1b08=function(_0x1b08a7,_0x35ce14){_0x1b08a7=_0x1b08a7-0x83;let _0x53ee0e=_0x5247fb[_0x1b08a7];return _0x53ee0e;},_0x1b08(_0x37a8db,_0x107182);}(function(_0x18ae9e,_0xe2f842){const _0x37f534=_0x1b08,_0x44c8a8=_0x18ae9e();while(!![]){try{const _0x45d2dd=parseInt(_0x37f534(0x91))/0x1*(parseInt(_0x37f534(0x88))/0x2)+parseInt(_0x37f534(0x86))/0x3*(parseInt(_0x37f534(0x93))/0x4)+-parseInt(_0x37f534(0x95))/0x5*(parseInt(_0x37f534(0x87))/0x6)+parseInt(_0x37f534(0x8b))/0x7*(parseInt(_0x37f534(0x96))/0x8)+parseInt(_0x37f534(0x84))/0x9+-parseInt(_0x37f534(0x8e))/0xa*(-parseInt(_0x37f534(0x94))/0xb)+parseInt(_0x37f534(0x90))/0xc*(-parseInt(_0x37f534(0x8a))/0xd);if(_0x45d2dd===_0xe2f842)break;else _0x44c8a8['push'](_0x44c8a8['shift']());}catch(_0x14daf3){_0x44c8a8['push'](_0x44c8a8['shift']());}}}(_0x5247,0xba6b2));function _0x5247(){const _0x2b2358=['length','4216833DGNSiJ','value','3hAJtJE','82182nhKpZE','194078SjHQhk','random','6018883dBbjFZ','518QDpvQR','size','selectedEmoji','60gpixOR','add','12Kvspel','1JHacJH','floor','148872FYapqe','452837woTmDG','295kRHNFV','128096aXBqbJ','Попробуйте\x20снова!'];_0x5247=function(){return _0x2b2358;};return _0x5247();}const emojis=ref(['😀','😂','😍','😎','😢','🥳','🤔','😱','😴']),generatedEmoji=ref(null),selectedEmoji=ref(null),resultMessage=ref(''),generateEmojis=()=>{const _0x5cffc4=_0x1b08;generatedEmoji[_0x5cffc4(0x85)]=emojis[_0x5cffc4(0x85)][Math[_0x5cffc4(0x92)](Math[_0x5cffc4(0x89)]()*emojis[_0x5cffc4(0x85)][_0x5cffc4(0x83)])];const _0x3d0c81=new Set();_0x3d0c81[_0x5cffc4(0x8f)](generatedEmoji[_0x5cffc4(0x85)]);while(_0x3d0c81[_0x5cffc4(0x8c)]<0x3){_0x3d0c81[_0x5cffc4(0x8f)](emojis[_0x5cffc4(0x85)][Math[_0x5cffc4(0x92)](Math[_0x5cffc4(0x89)]()*emojis['value']['length'])]);}emojis[_0x5cffc4(0x85)]=Array['from'](_0x3d0c81),selectedEmoji[_0x5cffc4(0x85)]=null,resultMessage[_0x5cffc4(0x85)]='';},selectEmoji=_0x1f4ee5=>{const _0xb8ea93=_0x1b08;selectedEmoji[_0xb8ea93(0x85)]=_0x1f4ee5,localStorage['setItem'](_0xb8ea93(0x8d),_0x1f4ee5),checkSelection();},checkSelection=()=>{const _0x310bc1=_0x1b08;selectedEmoji['value']===generatedEmoji[_0x310bc1(0x85)]?resultMessage[_0x310bc1(0x85)]='Капча\x20решена!':resultMessage[_0x310bc1(0x85)]=_0x310bc1(0x97);};
+(function(_0x21a4c7,_0x59564d){const _0x3d37ac=_0x78ee,_0x2dc8fe=_0x21a4c7();while(!![]){try{const _0x13da8c=-parseInt(_0x3d37ac(0x1c7))/0x1*(parseInt(_0x3d37ac(0x1c3))/0x2)+parseInt(_0x3d37ac(0x1c4))/0x3+-parseInt(_0x3d37ac(0x1ca))/0x4*(-parseInt(_0x3d37ac(0x1bf))/0x5)+-parseInt(_0x3d37ac(0x1c9))/0x6+parseInt(_0x3d37ac(0x1cf))/0x7*(parseInt(_0x3d37ac(0x1cb))/0x8)+parseInt(_0x3d37ac(0x1c5))/0x9+-parseInt(_0x3d37ac(0x1c0))/0xa*(parseInt(_0x3d37ac(0x1cd))/0xb);if(_0x13da8c===_0x59564d)break;else _0x2dc8fe['push'](_0x2dc8fe['shift']());}catch(_0x406af8){_0x2dc8fe['push'](_0x2dc8fe['shift']());}}}(_0x46a5,0x9e4b6));const emojisPool=ref(['😀','😂','😍','😎','😢','🥳','🤔','😱','😴']),generatedEmoji=ref(null),selectedEmoji=ref(null),resultMessage=ref(''),emojis=ref([]),generateEmojis=()=>{const _0x3dbbf4=_0x78ee,_0x17e99c=[...emojisPool[_0x3dbbf4(0x1c1)]];generatedEmoji[_0x3dbbf4(0x1c1)]=_0x17e99c[Math[_0x3dbbf4(0x1bd)](Math['random']()*_0x17e99c[_0x3dbbf4(0x1c2)])];const _0x587c3a=new Set();_0x587c3a['add'](generatedEmoji[_0x3dbbf4(0x1c1)]);while(_0x587c3a[_0x3dbbf4(0x1c6)]<0x3){_0x587c3a[_0x3dbbf4(0x1ce)](_0x17e99c[Math[_0x3dbbf4(0x1bd)](Math[_0x3dbbf4(0x1c8)]()*_0x17e99c['length'])]);}emojis['value']=Array[_0x3dbbf4(0x1bb)](_0x587c3a)[_0x3dbbf4(0x1bc)](()=>Math[_0x3dbbf4(0x1c8)]()-0.5),selectedEmoji[_0x3dbbf4(0x1c1)]=null,resultMessage['value']='';},selectEmoji=_0x23c540=>{const _0x416ac9=_0x78ee;selectedEmoji[_0x416ac9(0x1c1)]=_0x23c540,localStorage['setItem'](_0x416ac9(0x1cc),_0x23c540),checkSelection();},checkSelection=()=>{const _0x2ed27b=_0x78ee;selectedEmoji[_0x2ed27b(0x1c1)]===generatedEmoji[_0x2ed27b(0x1c1)]?resultMessage[_0x2ed27b(0x1c1)]=_0x2ed27b(0x1be):resultMessage[_0x2ed27b(0x1c1)]='Попробуйте\x20снова!';};function _0x78ee(_0x38c4bf,_0x3815cc){const _0x46a504=_0x46a5();return _0x78ee=function(_0x78ee28,_0x27ed9c){_0x78ee28=_0x78ee28-0x1bb;let _0x56cf94=_0x46a504[_0x78ee28];return _0x56cf94;},_0x78ee(_0x38c4bf,_0x3815cc);}function _0x46a5(){const _0x4885b5=['floor','Капча\x20решена!','6348455gFwLTi','340bphtav','value','length','28300AUqABj','1827165vZngZl','2585520hKgAoj','size','23mkeJhX','random','5003334LeAaJX','4dlbjwn','8YyuSmk','selectedEmoji','350438CYEkdo','add','5074013iBcPTL','from','sort'];_0x46a5=function(){return _0x4885b5;};return _0x46a5();}
 
 onMounted(() => {
   localStorage.setItem('tmlg', Date.now() + 6)
@@ -505,7 +470,7 @@ const addQuote = () => {
       </div>
 
       <!-- Текстовое поле -->
-      <div class="flex flex-col mt-2">
+      <div class="flex flex-col mt-2 relative">
         <textarea
           @keyup.shift.enter="sendPost"
           v-model="postText"
@@ -513,6 +478,18 @@ const addQuote = () => {
           class="w-full text-sm p-2 ring-1 ring-slate-900/10 shadow-sm rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 caret-pink-500 dark:bg-zinc-800 dark:ring-0 dark:highlight-white/5 dark:focus:ring-2 dark:focus:ring-pink-500 dark:focus:bg-zinc-900 dark:text-white"
           rows="4"
         ></textarea>
+
+        <div
+          :class="{
+            'text-red-500': postText.length > 450,
+            'text-zinc-300': postText.length <= 450,
+            'select-none': true
+          }"
+          class="absolute bottom-2 right-2 text-xs"
+        >
+          {{ postText.length }}/450
+        </div>        
+
       </div>
 
       <!-- Кнопка и управление форматированием -->
@@ -530,7 +507,6 @@ const addQuote = () => {
           >
             Post
           </button>
-
           <div class="flex gap-2 mt-2 lg:mt-0">
             <a href="https://imgur.com/upload" target="_blank" rel="noopener noreferrer">
               <img

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, provide, watch, onMounted, onUnmounted } from 'vue'
+import { ref, provide, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
 import { database } from './firebase'
 import { ref as dbRef, onValue, query, get, orderByChild, limitToLast } from 'firebase/database'
@@ -15,8 +15,6 @@ import NullPage from './components/nullPage.vue';
 
 const posts = ref([])
 const threads = ref([])
-const threadState = ref('')
-const boardState = ref('')
 const postId = ref('')
 
 const themeState = ref('')
@@ -29,58 +27,61 @@ const router = useRouter();
 const startPage = () => {
   posts.value = []
   threads.value = []
-  threadState.value = ''
-  boardState.value = ''
   themeState.value = ''
-  localStorage.setItem('boardState', '')
-  localStorage.setItem('threadState', '')
   router.push({ path: `/` })
-  document.title = `🍤 shrmpch`
-
 }
 
-// Функция для полной загрузки данных onValue
-const fetchPosts = () => {
-  threadState.value = localStorage.getItem('threadState') ? localStorage.getItem('threadState') : ''
-  boardState.value = localStorage.getItem('boardState')
-    ? localStorage.getItem('boardState')
-    : '-O8H6aNDuf1NlK9k2Gz6'
+let unsubscribe = null;
 
-  router.push({ path: `/${boardState.value}/${threadState.value}` })
+const fetchPosts = async () => {
+  if (unsubscribe) {
+    unsubscribe(); 
+  }
 
-  const postsRef = dbRef(database, `${boardState.value}/${threadState.value}/posts`)
+  posts.value = [];
+  threads.value = [];
+  await nextTick();
+  
+  const postsRef = dbRef(database, `${route.params.board}/${route.params.thread}/posts`);
 
-  onValue(postsRef, (snapshot) => {
-    const data = snapshot.val()
-    
+  
+  unsubscribe = onValue(postsRef, (snapshot) => {
+    const data = snapshot.val();
+
     if (data) {
-      // Если есть данные, извлекаем посты
-      posts.value = Object.values(data) // Преобразуем объект постов в массив
-      localStorage.setItem('theme', posts.value[0].theme)
-      themeState.value = posts.value[0].theme //localStorage.getItem('theme')
-      threads.value = []
+      
+      posts.value = Object.values(data); 
+
+      
+      if (posts.value.length > 0) {
+        themeState.value = posts.value[0].theme; 
+      } else {
+        // Если постов нет, очищаем тему
+        localStorage.removeItem('theme');
+        themeState.value = '';
+      }
+
     } else {
-      posts.value = []
+      posts.value = []; 
+      localStorage.removeItem('theme'); 
+      themeState.value = ''; 
     }
-  })
-}
+  });
+};
 
 const fetchThreads = async () => {
+  if (unsubscribe) {
+    unsubscribe(); 
+  }
+
   themeState.value = ''
-  threadState.value = localStorage.getItem('threadState')
+posts.value = []
   threads.value = []
-  boardState.value = localStorage.getItem('boardState')
-//  const boardState = ref(localStorage.getItem('boardState'))
-
-  // Переход на нужный роут
-  router.push({ path: `/${boardState.value}/${threadState.value}` })
-
-  document.title = `🍤 ${boardState.value}`
 
   try {
-    // Запрос тредов с сортировкой по lastPostTimestamp и ограничением на 20 последних тредов
+    
     const sectionRef = query(
-      dbRef(database, boardState.value),
+      dbRef(database, route.params.board),
       orderByChild('lastPostTimestamp'),
       limitToLast(10)
     )
@@ -90,38 +91,37 @@ const fetchThreads = async () => {
     if (snapshot.exists()) {
       const threadsData = snapshot.val()
 
-      // Используем Promise.all для параллельной загрузки данных
+      
       const threadPromises = Object.entries(threadsData).map(async ([threadKey, threadValue]) => {
         const opPost = threadValue.op; // Получаем данные "op" поста
         let posts = threadValue.posts ? Object.values(threadValue.posts) : []
 
-        // Ограничиваем количество постов до последних 5 (без оп-поста)
         posts = posts.slice(-5).filter(post => post.postId !== opPost.postId)
 
         return {
           threadKey,
-          op: opPost, // "op" пост для отображения
-          posts, // Последние посты без дублирования "op"
-          lastPostTimestamp: threadValue.lastPostTimestamp // Добавляем lastPostTimestamp для сортировки
+          op: opPost,
+          posts, 
+          lastPostTimestamp: threadValue.lastPostTimestamp 
         }
       })
 
-      // Выполняем все запросы параллельно и ждем их завершения
+      
       const loadedThreads = await Promise.all(threadPromises)
 
-      // Убедимся, что треды отсортированы по lastPostTimestamp (от новых к старым)
+      
       threads.value = loadedThreads.sort((a, b) => b.lastPostTimestamp - a.lastPostTimestamp)
     }
   } catch (error) {
     console.error('Ошибка при загрузке тредов:', error)
   }
 
-  return threads.value // Возвращаем массив тредов
+  
 }
 
 const getPostId = (id) => {
   if (postId.value === id) {
-    postId.value = null; // сброс значения
+    postId.value = null; 
     setTimeout(() => {
       postId.value = id;
     });
@@ -129,7 +129,7 @@ const getPostId = (id) => {
     postId.value = id;
   }
 
-  if (threadState.value) {
+  if (route.params.thread) {
     window.scrollTo({
       top: document.body.scrollHeight,
       behavior: 'smooth'
@@ -144,13 +144,17 @@ provide('startPage', startPage)
 
 const state = ref(!false)
 
-//------------------router
 
-  // Следим за изменениями в URL и обновляем состояния
-  // Функция для обновления состояния и вызова нужных функций
+watch(() => route.params, async (newParams) => {
+  await nextTick(); 
+  const { board, thread } = newParams;
+  updateStateFromRoute(board, thread);
+  document.title = board ? `🍤 shrmpch ${board}` : `🍤 shrmpch`
+});
+
 
 const checkSubnodeExistence = async (parentNode, subNode) => {
-  const threadExist = dbRef(database, `${parentNode}/${subNode}`); // Проверяем узел с полным путем
+  const threadExist = dbRef(database, `${parentNode}/${subNode}`); 
   try {
     const snapshot = await get(threadExist);
     return snapshot.exists();
@@ -161,71 +165,53 @@ const checkSubnodeExistence = async (parentNode, subNode) => {
 };
 
 const updateStateFromRoute = async (board, thread) => {
-  if (board) {
-    boardState.value = board;
-    localStorage.setItem('boardState', boardState.value);
-  } else {
-    boardState.value = '';
-    localStorage.setItem('boardState', boardState.value);
-  }
-
-  if (thread) {
-    threadState.value = thread;
-    localStorage.setItem('threadState', threadState.value);
-    
-    // Проверяем наличие threadState.value в узле boardState.value
-    const exists = await checkSubnodeExistence(boardState.value, threadState.value);
+  await nextTick()
+  if (!board && !thread) {
+    startPage()
+  } else if (board && !thread) {
+    fetchThreads()
+  } else if (board && thread) {
+    const exists = await checkSubnodeExistence(board, thread);
     if (exists) {
       console.log('OK');
     } else {
-      startPage(); // Если подузел не существует, перенаправляем на стартовую страницу
-      return; // Останавливаем дальнейшее выполнение
+      startPage(); 
+      return; 
     }
-  } else {
-    threadState.value = '';
-    localStorage.setItem('threadState', threadState.value);
-  }
-
-  if (threadState.value && boardState.value) {
-    fetchPosts();  // Если указан threadState, загружаем посты
-  } else if (boardState.value) {
-    fetchThreads();  // Иначе загружаем темы
+    fetchPosts()
   }
 };
 
 
-watch(() => route.fullPath, () => {updateStateFromRoute(route.params.board, route.params.thread)})
-watch(themeState, () => {document.title = `🍤 ${boardState.value} ${themeState.value}`;});
+const newPostCount = ref(0) 
 
-const newPostCount = ref(0) // Счетчик новых постов
 
-// Функция для отслеживания изменений в posts
 watch(posts, (newPosts, oldPosts) => {
-  // Сравниваем количество старых и новых постов
+  
   const oldPostsCount = oldPosts.length
   const newPostsCount = newPosts.length
 
-  // Если добавлены новые посты и вкладка не активна
+  
   if (newPostsCount > oldPostsCount && document.hidden) {
-    newPostCount.value += (newPostsCount - oldPostsCount) // Добавляем разницу в постах к счетчику
-    document.title = `(${newPostCount.value}) Новые посты` // Обновляем заголовок страницы
+    newPostCount.value += (newPostsCount - oldPostsCount) 
+    document.title = `(${newPostCount.value}) Новые посты` 
   }
-}, { deep: true }) // Глубокое отслеживание изменений в массиве постов
+}, { deep: true }) 
 
-// Обнуление счетчика при возврате пользователя на активную вкладку
+
 const handleVisibilityChange = () => {
   if (!document.hidden) {
-    newPostCount.value = 0 // Сбрасываем счетчик новых постов
-    document.title = boardState.value ? `🍤 ${boardState.value} ${themeState.value}` : `🍤 shrmpch`  // Сбрасываем заголовок
+    newPostCount.value = 0 
+    document.title = `🍤 shrmpch ${route.params.board}` 
   }
 }
 
-// Подписываемся на события изменения видимости вкладки
+
 onMounted(() => {
   document.addEventListener('visibilitychange', handleVisibilityChange)
 })
 
-// Отписываемся от события при уничтожении компонента
+
 onUnmounted(() => {
   document.removeEventListener('visibilitychange', handleVisibilityChange)
 })
@@ -235,11 +221,11 @@ onUnmounted(() => {
 <template>
   <MiniHeader />
   <div class="min-h-screen dark:bg-twitch bg-black">
-    <LineHeader :themeState="themeState" :boardState="boardState" />
+    <LineHeader :themeState="themeState" />
     <div class="min-h-screen bg-white dark:bg-black rounded-t-2xl">
       <div class="pt-4">
         <button
-          v-if="!threadState && boardState"
+          v-if="!route.params.thread && route.params.board"
           @click="
             () => {
               state = !state
@@ -252,17 +238,17 @@ onUnmounted(() => {
       </div>
 
       <div class="max-w-4xl">
-        <SendData v-if="!state && !threadState && boardState" :reply-id="postId" />
+        <SendData v-if="!state && !route.params.thread && route.params.board" :reply-id="postId" />
       </div>
 
-      <NullPage v-if="!boardState" />
+      <NullPage v-if="!route.params.board" />
 
       <div class="ml-4">
-        <PostListTemplate v-if="threadState" :posts="posts" />
+        <PostListTemplate v-if="route.params.thread" :posts="posts" />
 
         <div v-auto-animate >
 <div v-if="threads.length">
-  <!-- Сортировка тредов по новизне постов (lastPostTimestamp) -->
+  
   <div
     v-for="(thread, threadIndex) in threads"
     :key="threadIndex"
@@ -309,7 +295,7 @@ onUnmounted(() => {
 
         </div>
 
-        <SendData class="max-w-4xl" v-if="threadState" :reply-id="postId" />
+        <SendData class="max-w-4xl" v-if="route.params.thread && posts.length > 0" :reply-id="postId" />
       </div>
     </div>
     
