@@ -2,7 +2,7 @@
 import { ref, provide, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
 import { database } from './firebase'
-import { ref as dbRef, onValue, query, get, orderByChild, limitToLast } from 'firebase/database'
+import { ref as dbRef, onValue, query, get, orderByChild, limitToLast, off } from 'firebase/database'
 
 import PostListTemplate from './components/postListTemplate.vue'
 import PostTemplate from './components/postTemplate.vue'
@@ -31,30 +31,34 @@ const startPage = () => {
   router.push({ path: `/` })
 }
 
-let unsubscribe = null;
+let unsubscribe = null; // Хранение ссылки на предыдущий слушатель
+
+// Объявляем dataRef
+let dataRef = null; 
 
 const fetchPosts = async () => {
   if (unsubscribe) {
-    unsubscribe(); 
+    off(dataRef); // Отключаем слушателя
+    unsubscribe(); // Отписываемся от предыдущего слушателя
   }
 
   posts.value = [];
-  threads.value = [];
+  threads.value = []; // Очищаем треды, если это необходимо
   await nextTick();
-  
-  const postsRef = dbRef(database, `${route.params.board}/${route.params.thread}/posts`);
 
+  dataRef = dbRef(database, `${route.params.board}/${route.params.thread}/posts`);
   
-  unsubscribe = onValue(postsRef, (snapshot) => {
+  // Используем onValue для подписки на изменения
+  unsubscribe = onValue(dataRef, (snapshot) => { 
     const data = snapshot.val();
 
     if (data) {
-      
-      posts.value = Object.values(data); 
+      // Если есть данные, извлекаем посты
+      posts.value = Object.values(data); // Преобразуем объект постов в массив
 
-      
+      // Проверяем, есть ли хотя бы один пост
       if (posts.value.length > 0) {
-        themeState.value = posts.value[0].theme; 
+        themeState.value = posts.value[0].theme; // Устанавливаем тему
       } else {
         // Если постов нет, очищаем тему
         localStorage.removeItem('theme');
@@ -62,15 +66,16 @@ const fetchPosts = async () => {
       }
 
     } else {
-      posts.value = []; 
-      localStorage.removeItem('theme'); 
-      themeState.value = ''; 
+      posts.value = []; // Если данных нет, устанавливаем пустой массив
+      localStorage.removeItem('theme'); // Удаляем тему, если данных нет
+      themeState.value = ''; // Очищаем тему
     }
   });
 };
 
 const fetchThreads = async () => {
   if (unsubscribe) {
+    off(dataRef); // Отключаем слушателя
     unsubscribe(); 
   }
 
@@ -267,7 +272,8 @@ onUnmounted(() => {
         :theme="thread.op.theme"
         :password="thread.op.password"
         :day="thread.op.day"
-        :replies="thread.op.replies" 
+        :replies="thread.op.replies"
+        :mimeType="thread.op.mimeType" 
       />
 
       <!-- Выводим последние 5 постов -->
@@ -286,7 +292,8 @@ onUnmounted(() => {
           :theme="post.theme"
           :password="post.password"
           :day="post.day"
-          :replies="post.replies" 
+          :replies="post.replies"
+          :mimeType="post.mimeType" 
         />
       </div>
     </div>
