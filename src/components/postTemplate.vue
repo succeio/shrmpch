@@ -360,17 +360,17 @@ watchEffect(() => {
 
     <div class="gap-2 flex flex-col sm:flex-row">
       <div v-show="props.url"  class="gap-2 mt-2 relative">
-  <img
-    v-if="isImage"
-    :class="[ 
-      'transition-all duration-150 bg-white rounded-2xl cursor-pointer',
-      //isEnlarged ? 'w-80 sm:max-w-2xl' : 'w-48 sm:max-w-xs'
-      isEnlarged ? 'w-full sm:max-w-2xl' : 'w-48 sm:max-w-xs'
-    ]"
-    :src="url"
-    alt="post-pic"
-    @click="toggleImageSize"
-  />
+        <img
+          v-if="isImage"
+          :class="[
+            'transition-all duration-200 bg-white rounded-2xl cursor-pointer',
+            isEnlarged ? 'w-auto sm:max-w-2xl' : 'w-48 sm:max-w-xs'
+            //isEnlarged ? 'w-full sm:max-w-2xl' : 'w-48 sm:max-w-xs'
+          ]"
+          :src="url"
+          alt="post-pic"
+          @click="toggleImageSize"
+        />
 
   <video
     v-if="isVideo"
@@ -410,8 +410,8 @@ watchEffect(() => {
         ></iframe>
       </div>
 
-      <!-- Text with processed links max-w-prose -->
-      <div id="postCore" class="max-w-prose sm:max-w-sm">
+      <!-- Text with processed links -->
+      <div id="postCore" class="max-w-prose">
         <p class="ml-2 pt-2 whitespace-normal break-words text-sm sm:text-base">
           <span v-for="(part, index) in splitTextWithLinks" :key="index">
             <span
