@@ -411,7 +411,7 @@ watchEffect(() => {
       </div>
 
       <!-- Text with processed links max-w-prose -->
-      <div id="postCore" class="w-full">
+      <div id="postCore" class="max-w-prose sm:max-w-sm">
         <p class="ml-2 pt-2 whitespace-normal break-words text-sm sm:text-base">
           <span v-for="(part, index) in splitTextWithLinks" :key="index">
             <span
