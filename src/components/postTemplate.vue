@@ -410,8 +410,8 @@ watchEffect(() => {
         ></iframe>
       </div>
 
-      <!-- Text with processed links -->
-      <div id="postCore" class="max-w-prose">
+      <!-- Text with processed links max-w-prose -->
+      <div id="postCore" class="w-full">
         <p class="ml-2 pt-2 whitespace-normal break-words text-sm sm:text-base">
           <span v-for="(part, index) in splitTextWithLinks" :key="index">
             <span
