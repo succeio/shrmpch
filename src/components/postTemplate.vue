@@ -412,7 +412,7 @@ watchEffect(() => {
 
       <!-- Text with processed links -->
       <div id="postCore" class="max-w-prose">
-        <p class="min-h-24 ml-2 pt-2 whitespace-normal break-words text-sm sm:text-base">
+        <p class="ml-2 pt-2 whitespace-normal break-words text-sm sm:text-base">
           <span v-for="(part, index) in splitTextWithLinks" :key="index">
             <span
               v-if="part.isLink"

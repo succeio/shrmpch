@@ -551,7 +551,7 @@ const addQuote = () => {
       </div>
 
       <!-- Текстовое поле -->
-      <div class="flex flex-col mt-2">
+      <div class="min-h-24 flex flex-col mt-2">
         <div class="relative">
 <textarea
           @keyup.shift.enter="sendPost"
