@@ -161,7 +161,7 @@ function _0x1b31(){const _0x42b4b6=['value','banned/','4423149FyCIxr','288588RAi
           name: postName.value ? (postName.value.length > 25 ? postName.value.slice(0, 25) : postName.value) : 'Аноним',
           password: postPassword.value ? hashedString.value : '',
           theme: postTheme.value.length < 45 ? postTheme.value : postTheme.value.slice(0, 25),
-          text: (/\s{4,}/.test(postText.value) ? postText.value.replace(/\s{4,}/g, ' ') : postText.value).replace(/[^A-Za-zА-Яа-я0-9\s\w\s.ё—`,:;!?'"<>\\//{}$#(@%^&*_+=)-]/g, ''),
+          text: (/\s{4,}/.test(postText.value) ? postText.value.replace(/\s{4,}/g, ' ') : postText.value).replace(/[^A-Za-zА-Яа-я0-9\s\w\s.ё—`,:;!?'"<>\\//{[]}$#(@%^&*_+=)-]/g, ''),
           url: postUrl.value,
           time: new Date().toLocaleTimeString('ru-RU', {
             timeZone: 'Europe/Moscow',
@@ -263,7 +263,7 @@ function _0x1b31(){const _0x42b4b6=['value','banned/','4423149FyCIxr','288588RAi
           name: postName.value ? (postName.value.length > 25 ? postName.value.slice(0, 25) : postName.value) : 'Аноним',
           password: postPassword.value ? hashedString.value : '',
           theme: postTheme.value.length < 45 ? postTheme.value : postTheme.value.slice(0, 25),
-          text: (/\s{4,}/.test(postText.value) ? postText.value.replace(/\s{4,}/g, ' ') : postText.value).replace(/[^A-Za-zА-Яа-я0-9\s\w\sё—`.,:;!?'"<>\\//{}$#(@%^&*_+=)-]/g, ''),
+          text: (/\s{4,}/.test(postText.value) ? postText.value.replace(/\s{4,}/g, ' ') : postText.value).replace(/[^A-Za-zА-Яа-я0-9\s\w\sё—`.,:;!?'"<>\\//{[]}$#(@%^&*_+=)-]/g, ''),
           url: postUrl.value,
           time: new Date().toLocaleTimeString('ru-RU', {
             timeZone: 'Europe/Moscow',
