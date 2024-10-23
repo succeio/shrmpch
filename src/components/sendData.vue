@@ -137,6 +137,24 @@ const boards = [
   'tech'
 ]
 
+const isSubmitting = ref(false);
+
+const submitPost = async () => {
+  if (isSubmitting.value) return;
+  
+  isSubmitting.value = true;
+
+  try {
+    // Ожидаем завершения отправки поста
+    await sendPost();
+  } catch (error) {
+    console.error("Ошибка при отправке поста:", error);
+  } finally {
+    // Разблокируем кнопку в любом случае (успех или ошибка)
+    isSubmitting.value = false;
+  }
+}
+
 const sendPost = async () => {
   try {
 
@@ -554,7 +572,7 @@ const addQuote = () => {
       <div class=" flex flex-col mt-2">
         <div class="relative">
 <textarea
-          @keyup.shift.enter="sendPost"
+          @keyup.shift.enter="submitPost"
           v-model="postText"
           placeholder="post"
           class="min-h-24 w-full text-sm p-2 ring-1 ring-slate-900/10 shadow-sm rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 caret-pink-500 dark:bg-zinc-800 dark:ring-0 dark:highlight-white/5 dark:focus:ring-2 dark:focus:ring-pink-500 dark:focus:bg-zinc-900 dark:text-white"
@@ -605,8 +623,9 @@ const addQuote = () => {
 
 
           <button
-            @click="sendPost"
-            class="dark:bg-twitch bg-black text-white rounded-2xl p-1 w-full lg:min-w-32 lg:w-auto"
+             :disabled="isSubmitting"
+            @click="submitPost"
+            class="dark:bg-twitch bg-black dark:disabled:bg-zinc-900 disabled:bg-gray-300 text-white rounded-2xl p-1 w-full lg:min-w-32 lg:w-auto"
           >
             Post
           </button>
