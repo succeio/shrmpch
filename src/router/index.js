@@ -3,8 +3,13 @@ import { createRouter, createWebHistory } from 'vue-router';
 import App from '../App.vue';
 
 const routes = [
+    {
+    path: '/',
+    name: 'home',
+    component: App, 
+  },
   {
-    path: '/:board?/:thread?', // Параметры URL: boardState обязательно, threadState опционально
+    path: '/:board?/:thread?', // Параметры URL: 
     name: 'id',
     component: App,
     props: true,  // Передаем параметры как пропсы
