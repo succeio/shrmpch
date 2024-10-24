@@ -272,7 +272,7 @@ function _0x1b31(){const _0x42b4b6=['value','banned/','4423149FyCIxr','288588RAi
             errorTrigger.value++; // Обновляем триггер          
           }
         }
-      } else if (route.params.board && boards.some((board) => route.params.board.includes(board))) {
+      } else if (route.params.board && boards.includes(route.params.board)) {
         const threadId = push(dbRef(database, 'threads')).key // Генерация уникального ID для нового треда
         const postId = push(dbRef(database, `${route.params.board}/${threadId}`)).key // Генерация уникального ID для поста
 
@@ -329,6 +329,9 @@ function _0x1b31(){const _0x42b4b6=['value','banned/','4423149FyCIxr','288588RAi
             errorTrigger.value++; // Обновляем триггер
           }
         }
+      } else {
+        errorMessage.value = `Раздел не существует.`
+        errorTrigger.value++; // Обновляем триггер        
       }
     } else {
       errorMessage.value = `Забанен до ${new Date(banExpiration.value).toLocaleString()}`
